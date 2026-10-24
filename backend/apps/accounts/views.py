@@ -9,7 +9,7 @@ from .serializers import RegisterSerializer,EmailTokenObtainPairSerializer,UserP
 from .utils import send_verification_email
 from .tokens import email_verification_token
 
-
+from .models import CoreTeam
 
 User = get_user_model()
 class RegisterView(generics.CreateAPIView):
@@ -110,7 +110,7 @@ class CoreTeamMemberCreateView(APIView):
         core_team = request.data.get("core_team")
 
         valid_teams = [
-            choice[0] for choice in User.CoreTeam.choices
+            choice[0] for choice in CoreTeam.choices
         ]
 
         if not email or not core_team:
