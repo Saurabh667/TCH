@@ -1,6 +1,6 @@
-
 import { useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+
 import {
   FormHeader,
   FormNotice,
@@ -9,14 +9,20 @@ import {
   TextField,
 } from "../auth/AuthFields";
 
+import { registerUser } from "../../services/auth";
+
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const MIN_PASSWORD_LENGTH = 8;
 
 function validate(values) {
   const errors = {};
-  const email = values.email.trim();
 
-  if (values.fullName.trim().length < 2) {
+  const fullName = values.fullName.trim();
+  const email = values.email.trim();
+  const department = values.department.trim();
+  const phone = values.phone.trim();
+
+  if (fullName.length < 2) {
     errors.fullName = "Enter your full name.";
   }
 
@@ -24,6 +30,22 @@ function validate(values) {
     errors.email = "Enter your email address.";
   } else if (!EMAIL_PATTERN.test(email)) {
     errors.email = "Enter a valid email address.";
+  }
+
+  if (!department) {
+    errors.department = "Enter your department.";
+  }
+
+  if (values.yearOfStudy) {
+    const year = Number(values.yearOfStudy);
+
+    if (!Number.isInteger(year) || year < 1 || year > 10) {
+      errors.yearOfStudy = "Enter a valid year of study.";
+    }
+  }
+
+  if (phone && !/^\+?[0-9]{7,15}$/.test(phone)) {
+    errors.phone = "Enter a valid phone number.";
   }
 
   if (!values.password) {
@@ -41,26 +63,19 @@ function validate(values) {
   return errors;
 }
 
-// Connect this function to your backend when the API is ready.
-async function registerUser(details) {
-  void details;
-
-  return {
-    ok: false,
-    message:
-      "Your details look valid, but sign-up is not connected to a server yet, so no account was created.",
-  };
-}
-
 const linkClasses =
   "rounded font-semibold text-cyan-700 underline-offset-4 transition-colors hover:text-sky-800 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-600/50 dark:text-cyan-400 dark:hover:text-cyan-300 dark:focus-visible:ring-cyan-400/50";
 
 export default function Signup() {
   const formRef = useRef(null);
+  const navigate = useNavigate();
 
   const [values, setValues] = useState({
     fullName: "",
     email: "",
+    department: "",
+    yearOfStudy: "",
+    phone: "",
     password: "",
     confirmPassword: "",
   });
@@ -71,28 +86,39 @@ export default function Signup() {
 
   const handleChange = (event) => {
     const { name, value } = event.target;
-    const next = { ...values, [name]: value };
+
+    const next = {
+      ...values,
+      [name]: value,
+    };
 
     setValues(next);
 
-    setErrors((prev) => {
-      const fresh = validate(next);
-      const updated = { ...prev };
+    setErrors((previous) => {
+      const freshErrors = validate(next);
+      const updated = { ...previous };
 
-      Object.keys(prev).forEach((key) => {
-        if (prev[key]) updated[key] = fresh[key];
+      Object.keys(previous).forEach((key) => {
+        if (previous[key]) {
+          updated[key] = freshErrors[key];
+        }
       });
 
       return updated;
     });
+
+    if (notice) {
+      setNotice(null);
+    }
   };
 
   const handleBlur = (event) => {
     const { name } = event.target;
+    const validationErrors = validate(values);
 
-    setErrors((prev) => ({
-      ...prev,
-      [name]: validate(values)[name],
+    setErrors((previous) => ({
+      ...previous,
+      [name]: validationErrors[name],
     }));
   };
 
@@ -100,33 +126,58 @@ export default function Signup() {
     event.preventDefault();
     setNotice(null);
 
-    const nextErrors = validate(values);
-    setErrors(nextErrors);
+    const validationErrors = validate(values);
 
-    if (Object.keys(nextErrors).length > 0) {
-      requestAnimationFrame(() =>
+    setErrors(validationErrors);
+
+    if (Object.keys(validationErrors).length > 0) {
+      requestAnimationFrame(() => {
         formRef.current
           ?.querySelector('[aria-invalid="true"]')
-          ?.focus()
-      );
+          ?.focus();
+      });
+
       return;
     }
 
     setSubmitting(true);
 
     try {
-      const result = await registerUser({
-        fullName: values.fullName.trim(),
-        email: values.email.trim(),
-        password: values.password,
-      });
+      const result = await registerUser(values);
 
       if (!result.ok) {
         setNotice({
-          tone: "info",
+          tone: "error",
           text: result.message,
         });
+
+        return;
       }
+
+      setNotice({
+        tone: "success",
+        text:
+          result.data.message ||
+          "Registration successful. Check your email for verification instructions.",
+      });
+
+      // Navigate after briefly displaying the success message.
+      // The email verification page will be implemented separately.
+      window.setTimeout(() => {
+        navigate("/login", {
+          state: {
+            registeredEmail: values.email.trim().toLowerCase(),
+            registrationMessage:
+              result.data.message ||
+              "Registration successful. Please verify your email before logging in.",
+          },
+        });
+      }, 1500);
+    } catch {
+      setNotice({
+        tone: "error",
+        text: "An unexpected error occurred. Please try again.",
+      });
     } finally {
       setSubmitting(false);
     }
@@ -167,6 +218,41 @@ export default function Signup() {
           onChange={handleChange}
           onBlur={handleBlur}
           error={errors.email}
+        />
+
+        <TextField
+          label="Department"
+          name="department"
+          type="text"
+          autoComplete="organization-title"
+          placeholder="e.g. Computer Science"
+          value={values.department}
+          onChange={handleChange}
+          onBlur={handleBlur}
+          error={errors.department}
+        />
+
+        <TextField
+          label="Year of study (optional)"
+          name="yearOfStudy"
+          type="number"
+          placeholder="e.g. 3"
+          value={values.yearOfStudy}
+          onChange={handleChange}
+          onBlur={handleBlur}
+          error={errors.yearOfStudy}
+        />
+
+        <TextField
+          label="Phone number (optional)"
+          name="phone"
+          type="tel"
+          autoComplete="tel"
+          placeholder="e.g. 9876543210"
+          value={values.phone}
+          onChange={handleChange}
+          onBlur={handleBlur}
+          error={errors.phone}
         />
 
         <PasswordField
