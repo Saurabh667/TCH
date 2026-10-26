@@ -5,11 +5,11 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.views import TokenObtainPairView,TokenRefreshView
 
-from .serializers import RegisterSerializer,EmailTokenObtainPairSerializer,UserProfileSerializer,CoreTeamMemberSerializer
+from .serializers import RegisterSerializer,EmailTokenObtainPairSerializer,UserProfileSerializer,CoreTeamMemberSerializer,MemberApplication,MemberApplicationSerializer
 from .utils import send_verification_email
 from .tokens import email_verification_token
 
-from .models import CoreTeam
+from .models import CoreTeam,MemberApplication
 
 User = get_user_model()
 class RegisterView(generics.CreateAPIView):
@@ -258,6 +258,89 @@ class ResendVerificationEmailView(APIView):
                     "If an eligible account exists, "
                     "a verification email will be sent."
                 )
+            },
+            status=status.HTTP_200_OK,
+        )
+
+
+class MyApplicationView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        application = MemberApplication.objects.filter(
+            student=request.user
+        ).first()
+
+        if not application:
+            return Response(
+                {
+                    "has_application": False,
+                    "message": "You have not submitted your application yet.",
+                },
+                status=status.HTTP_200_OK,
+            )
+
+        return Response(
+            {
+                "has_application": True,
+                "application": MemberApplicationSerializer(application).data,
+            },
+            status=status.HTTP_200_OK,
+        )
+
+    def post(self, request):
+        if MemberApplication.objects.filter(student=request.user).exists():
+            return Response(
+                {
+                    "detail": (
+                        "You have already submitted an application. "
+                        "Use PATCH to update it."
+                    )
+                },
+                status=status.HTTP_409_CONFLICT,
+            )
+
+        serializer = MemberApplicationSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        application = serializer.save(student=request.user)
+
+        return Response(
+            {
+                "message": "Application submitted successfully.",
+                "application": MemberApplicationSerializer(application).data,
+            },
+            status=status.HTTP_201_CREATED,
+        )
+
+    def patch(self, request):
+        try:
+            application = MemberApplication.objects.get(
+                student=request.user
+            )
+        except MemberApplication.DoesNotExist:
+            return Response(
+                {
+                    "detail": (
+                        "You have not submitted an application yet. "
+                        "Use POST to create one."
+                    )
+                },
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        serializer = MemberApplicationSerializer(
+            application,
+            data=request.data,
+            partial=True,
+        )
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
+        return Response(
+            {
+                "message": "Application updated successfully.",
+                "application": serializer.data,
             },
             status=status.HTTP_200_OK,
         )

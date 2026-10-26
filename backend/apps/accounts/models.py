@@ -137,3 +137,56 @@ class User(AbstractUser):
     def __str__(self):
         return self.email
 
+
+class MemberApplication(models.Model):
+
+    class PreferredTeam(models.TextChoices):
+        TECH = "tech", "Tech Team"
+        EVENT_MANAGEMENT = "event_management", "Event Management Team"
+        CONTENT_CREATION = "content_creation", "Content Creation Team"
+        UNDECIDED = "undecided", "Not Decided Yet"
+
+    student = models.OneToOneField(
+        User,
+        to_field="student_id",
+        db_column="student_id",
+        on_delete=models.CASCADE,
+        related_name="application",
+    )
+
+    reason_to_join = models.TextField(
+        blank=True,
+    )
+
+    areas_of_interest = models.JSONField(
+        default=list,
+        blank=True,
+    )
+
+    skills = models.JSONField(
+        default=list,
+        blank=True,
+    )
+
+    github_url = models.URLField(
+        max_length=255,
+        blank=True,
+    )
+
+    linkedin_url = models.URLField(
+        max_length=255,
+        blank=True,
+    )
+
+    preferred_team = models.CharField(
+        max_length=30,
+        choices=PreferredTeam.choices,
+        blank=True,
+        default="",
+    )
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"Application - {self.student.student_id}"

@@ -1,6 +1,6 @@
 from django.urls import path 
 from rest_framework_simplejwt.views import TokenRefreshView
-from .views import RegisterView,VerifyEmailView,LoginView,MyProfileView,ResendVerificationEmailView,CoreTeamMemberCreateView,CoreTeamMemberListView
+from .views import RegisterView,VerifyEmailView,LoginView,MyProfileView,ResendVerificationEmailView,CoreTeamMemberCreateView,CoreTeamMemberListView,MyApplicationView
 
 urlpatterns = [
     path("register/", RegisterView.as_view(), name="register"),
@@ -13,4 +13,7 @@ urlpatterns = [
     # core team member creation
     path("core-team/",CoreTeamMemberListView.as_view(),name="core-team-list"),
     path("core-team/assign/",CoreTeamMemberCreateView.as_view(),name="core-team-assign"),
+
+    # update of the user data and adding more informations and we have to use patch method for this
+    path("application/",MyApplicationView.as_view(),name="my-application"),
 ]

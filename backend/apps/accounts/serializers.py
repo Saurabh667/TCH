@@ -2,6 +2,7 @@
 from django.contrib.auth import get_user_model
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework import serializers
+from .models import MemberApplication
 
 User = get_user_model()
 
@@ -134,3 +135,46 @@ class CoreTeamMemberSerializer(serializers.ModelSerializer):
             "role",
             "is_email_verified",
         ]
+
+
+
+class MemberApplicationSerializer(serializers.ModelSerializer):
+    student_id = serializers.CharField(
+        source="student.student_id",
+        read_only=True,
+    )
+
+    class Meta:
+        model = MemberApplication
+        fields = [
+            "id",
+            "student_id",
+            "reason_to_join",
+            "areas_of_interest",
+            "skills",
+            "github_url",
+            "linkedin_url",
+            "preferred_team",
+            "created_at",
+            "updated_at",
+        ]
+        read_only_fields = [
+            "id",
+            "student_id",
+            "created_at",
+            "updated_at",
+        ]
+
+    def validate_github_url(self, value):
+        if value and "github.com" not in value.lower():
+            raise serializers.ValidationError(
+                "Please enter a valid GitHub profile URL."
+            )
+        return value
+
+    def validate_linkedin_url(self, value):
+        if value and "linkedin.com" not in value.lower():
+            raise serializers.ValidationError(
+                "Please enter a valid LinkedIn profile URL."
+            )
+        return value
