@@ -1,0 +1,258 @@
+{
+    "club": {
+        "name": "The Coders Hub",
+        "shortName": "TCH"
+    },
+    "teams": [
+        {
+            "id": "tech",
+            "name": "Tech Team",
+            "description": "Responsible for technical development and projects",
+            "leaderId": "TCH002",
+            "coLeaderIds": [
+                "TCH006",
+                "TCH007"
+            ],
+            "memberIds": [
+                "TCH006",
+                "TCH007"
+            ]
+        },
+        {
+            "id": "event-management",
+            "name": "Event Management Team",
+            "description": "Responsible for organizing events and activities",
+            "leaderId": "TCH001",
+            "coLeaderIds": [],
+            "memberIds": [
+                "TCH001",
+                "TCH003"
+            ]
+        },
+        {
+            "id": "social-media",
+            "name": "Social Media Team",
+            "description": "Responsible for social media and community outreach",
+            "leaderId": "TCH004",
+            "coLeaderIds": [],
+            "memberIds": [
+                "TCH004",
+                "TCH008"
+            ]
+        },
+        {
+            "id": "design",
+            "name": "Design Team",
+            "description": "Responsible for creative design and visual communication",
+            "leaderId": "TCH008",
+            "coLeaderIds": [],
+            "memberIds": [
+                "TCH008"
+            ]
+        },
+        {
+            "id": "video-editing",
+            "name": "Video Editing Team",
+            "description": "Responsible for editing and producing video content",
+            "leaderId": "TCH005",
+            "coLeaderIds": [],
+            "memberIds": [
+                "TCH005"
+            ]
+        }
+    ],
+    "members": [
+        {
+            "id": "TCH002",
+            "fullName": "Shikha Gupta",
+            "position": "Tech Lead",
+            "teamId": "tech",
+            "profile": {
+                "photo": "/images/members/shikha-gupta.jpg",
+                "introduction": "",
+                "skills": [],
+                "department": "Computer Science and Engineering",
+                "year": null
+            },
+            "socialLinks": {
+                "linkedin": "",
+                "github": "",
+                "instagram": ""
+            },
+            "isActive": true
+        },
+        {
+            "id": "TCH001",
+            "fullName": "Adarsh Singh",
+            "position": "Event Lead",
+            "teamId": "event-management",
+            "profile": {
+                "photo": "/images/members/adarsh-singh.jpg",
+                "introduction": "",
+                "skills": [],
+                "department": "Computer Science and Engineering",
+                "year": null
+            },
+            "socialLinks": {
+                "linkedin": "",
+                "github": "",
+                "instagram": ""
+            },
+            "isActive": true
+        },
+        
+        {
+            "id": "TCH006",
+            "fullName": "Saurabh Yadav",
+            "position": "Tech Lead",
+            "teamId": "tech",
+            "profile": {
+                "photo": "/teamImg/saurabh5.png",
+                "introduction": "",
+                "skills": [],
+                "department": "Computer Science and Engineering",
+                "year": null
+            },
+            "socialLinks": {
+                "linkedin": "",
+                "github": "https://github.com/Saurabh667",
+                "instagram": ""
+            },
+            "isActive": true
+        },
+        {
+            "id": "TCH003",
+            "fullName": "Devanshu Rajpoot",
+            "position": "Event Lead",
+            "teamId": "event-management",
+            "profile": {
+                "photo": "/images/members/devanshu-rajpoot.jpg",
+                "introduction": "",
+                "skills": [],
+                "department": "Computer Science and Engineering",
+                "year": null
+            },
+            "socialLinks": {
+                "linkedin": "",
+                "github": "",
+                "instagram": ""
+            },
+            "isActive": true
+        },
+        {
+            "id": "TCH004",
+            "fullName": "Kalyani Singh",
+            "position": "Social Media Lead",
+            "teamId": "social-media",
+            "profile": {
+                "photo": "/images/members/kalyani-singh.jpg",
+                "introduction": "",
+                "skills": [],
+                "department": "Computer Science and Engineering",
+                "year": null
+            },
+            "socialLinks": {
+                "linkedin": "",
+                "github": "",
+                "instagram": ""
+            },
+            "isActive": true
+        },
+        {
+            "id": "TCH005",
+            "fullName": "Ayush Sharma",
+            "position": "Video Editor",
+            "teamId": "video-editing",
+            "profile": {
+                "photo": "/images/members/ayush-sharma.jpg",
+                "introduction": "",
+                "skills": [],
+                "department": "Computer Science and Engineering",
+                "year": null
+            },
+            "socialLinks": {
+                "linkedin": "",
+                "github": "",
+                "instagram": ""
+            },
+            "isActive": true
+        },
+        
+        {
+            "id": "TCH007",
+            "fullName": "Niraj Singh",
+            "position": "Co-Tech Lead",
+            "teamId": "tech",
+            "profile": {
+                "photo": "/images/members/niraj-singh.jpg",
+                "introduction": "",
+                "skills": [],
+                "department": "Computer Science and Engineering",
+                "year": null
+            },
+            "socialLinks": {
+                "linkedin": "",
+                "github": "",
+                "instagram": ""
+            },
+            "isActive": true
+        },
+        {
+            "id": "TCH008",
+            "fullName": "Disha Ojha",
+            "position": "Design Lead",
+            "teamId": "design",
+            "profile": {
+                "photo": "/images/members/disha-ojha.jpg",
+                "introduction": "",
+                "skills": [],
+                "department": "Computer Science and Engineering",
+                "year": null
+            },
+            "socialLinks": {
+                "linkedin": "",
+                "github": "",
+                "instagram": ""
+            },
+            "isActive": true
+        },
+        {
+            "id": "TCH009",
+            "fullName": "Sakshi Singh",
+            "position": "Outreach Lead",
+            "teamId": "social-media",
+            "profile": {
+                "photo": "/images/members/sakshi-singh.jpg",
+                "introduction": "",
+                "skills": [],
+                "department": "Computer Science and Engineering",
+                "year": null
+            },
+            "socialLinks": {
+                "linkedin": "",
+                "github": "",
+                "instagram": ""
+            },
+            "isActive": true
+        },
+        {
+            "id": "TCH010",
+            "fullName": "Kishan Soni",
+            "position": "Co-Tech Lead",
+            "teamId": "tech",
+            "profile": {
+                "photo": "/images/members/kishan-soni.jpg",
+                "introduction": "",
+                "skills": [],
+                "department": "Computer Science and Engineering",
+                "year": null
+            },
+            "socialLinks": {
+                "linkedin": "",
+                "github": "",
+                "instagram": ""
+            },
+            "isActive": true
+        }
+    ]
+}

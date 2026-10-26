@@ -7,6 +7,9 @@ import Navbar from "./components/Navbar/Navbar";
 import VerifyEmail from "./components/auth/VerifyEmail";
 import Home from "./pages/Home";
 import Footer from "./pages/Footer";
+import About from "./pages/About";
+import AuthVerification from "./components/auth/AuthVerification";
+import Profile from "./pages/Profile";
 
 export default function App() {
   return (
@@ -16,16 +19,8 @@ export default function App() {
 
         <Routes>
           {/* Public home page */}
-          <Route
-            path="/"
-            element={
-              <>
-                <Home />
-                <Footer />
-              </>
-            }
-          />
-
+          <Route path="/" element={<><Home /><Footer /></>} />
+          <Route path="/about" element={<><About /><Footer /></>} />
           {/* Authentication pages */}
           <Route element={<AuthLayout />}>
             <Route path="/login" element={<Login />} />
@@ -33,8 +28,14 @@ export default function App() {
             <Route path="/verify-email" element={<VerifyEmail />} />
           </Route>
 
+          {/* Protected Routes */}
+          <Route element={<AuthVerification />}>
+            <Route path="/profile" element={<><Profile /><Footer /></>} />
+
+          </Route>
+
           {/* Unknown routes */}
-          <Route path="*" element={<Navigate to="/" replace />} />
+          {/* <Route path="*" element={<Navigate to="/" replace />} /> */}
         </Routes>
       </BrowserRouter>
     </ThemeProvider>
