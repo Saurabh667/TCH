@@ -165,3 +165,5 @@ DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 # Frontend URL for email verification links
 FRONTEND_URL = "http://localhost:5173"
+
+PASSWORD_RESET_TIMEOUT = 86400

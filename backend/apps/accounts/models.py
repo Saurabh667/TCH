@@ -2,6 +2,9 @@
 from django.db import models,transaction
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.core.validators import RegexValidator
+from django.utils import timezone 
+from datetime import timedelta 
+import uuid
 
 class UserManager(BaseUserManager):
     """
@@ -190,3 +193,20 @@ class MemberApplication(models.Model):
 
     def __str__(self):
         return f"Application - {self.student.student_id}"
+
+
+
+
+class PendingRegistration(models.Model): 
+    full_name = models.CharField(max_length=150) 
+    email = models.EmailField(unique=True) 
+    department = models.CharField(max_length=100) 
+    year_of_study = models.PositiveSmallIntegerField( null=True, blank=True, ) 
+    phone = models.CharField(max_length=15, blank=True) # Password will be stored as a Django password hash. 
+    password = models.CharField(max_length=128) 
+    token = models.UUIDField( default=uuid.uuid4, unique=True, editable=False, ) 
+    created_at = models.DateTimeField(auto_now_add=True) 
+    def is_expired(self): 
+        return timezone.now() > self.created_at + timedelta(hours=24) 
+    def __str__(self): 
+        return self.email

@@ -2,43 +2,45 @@
 from django.contrib.auth import get_user_model
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework import serializers
-from .models import MemberApplication
-
+from .models import MemberApplication,PendingRegistration
 User = get_user_model()
 
 
-class RegisterSerializer(serializers.ModelSerializer):
+class RegisterSerializer(serializers.Serializer):
+    full_name = serializers.CharField(max_length=150)
+    email = serializers.EmailField()
+    department = serializers.CharField(max_length=100)
+
+    year_of_study = serializers.IntegerField(
+        required=False,
+        allow_null=True,
+    )
+
+    phone = serializers.CharField(
+        max_length=15,
+        required=False,
+        allow_blank=True,
+    )
+
     password = serializers.CharField(
         write_only=True,
         min_length=8,
         style={"input_type": "password"},
     )
+
     confirm_password = serializers.CharField(
         write_only=True,
         style={"input_type": "password"},
     )
 
-    class Meta:
-        model = User
-        fields = [
-            "id",
-            "full_name",
-            "email",
-            "student_id",
-            "department",
-            "year_of_study",
-            "phone",
-            "password",
-            "confirm_password",
-        ]
-        read_only_fields = ["id", "student_id"]
-
     def validate_email(self, value):
         value = value.strip().lower()
+
         if User.objects.filter(email__iexact=value).exists():
             raise serializers.ValidationError(
                 "An account with this email already exists."
             )
+
         return value
 
     def validate(self, attrs):
@@ -46,18 +48,83 @@ class RegisterSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError({
                 "confirm_password": "Passwords do not match."
             })
+
         return attrs
 
     def create(self, validated_data):
         validated_data.pop("confirm_password")
 
-        user = User.objects.create_user(
-            **validated_data,
-            role=User.Role.CLUB_MEMBER,
-            is_active=True,
-            is_email_verified=False,
+        raw_password = validated_data.pop("password")
+
+        # Remove any older pending registration for this email.
+        PendingRegistration.objects.filter(
+            email__iexact=validated_data["email"]
+        ).delete()
+
+        # Hash the password before storing it temporarily.
+        temporary_user = User(
+            email=validated_data["email"],
         )
-        return user
+        temporary_user.set_password(raw_password)
+
+        pending = PendingRegistration.objects.create(
+            **validated_data,
+            password=temporary_user.password,
+        )
+
+        return pending
+
+# class RegisterSerializer(serializers.ModelSerializer):
+#     password = serializers.CharField(
+#         write_only=True,
+#         min_length=8,
+#         style={"input_type": "password"},
+#     )
+#     confirm_password = serializers.CharField(
+#         write_only=True,
+#         style={"input_type": "password"},
+#     )
+
+#     class Meta:
+#         model = User
+#         fields = [
+#             "id",
+#             "full_name",
+#             "email",
+#             "student_id",
+#             "department",
+#             "year_of_study",
+#             "phone",
+#             "password",
+#             "confirm_password",
+#         ]
+#         read_only_fields = ["id", "student_id"]
+
+#     def validate_email(self, value):
+#         value = value.strip().lower()
+#         if User.objects.filter(email__iexact=value).exists():
+#             raise serializers.ValidationError(
+#                 "An account with this email already exists."
+#             )
+#         return value
+
+#     def validate(self, attrs):
+#         if attrs["password"] != attrs["confirm_password"]:
+#             raise serializers.ValidationError({
+#                 "confirm_password": "Passwords do not match."
+#             })
+#         return attrs
+
+#     def create(self, validated_data):
+#         validated_data.pop("confirm_password")
+
+#         user = User.objects.create_user(
+#             **validated_data,
+#             role=User.Role.CLUB_MEMBER,
+#             is_active=True,
+#             is_email_verified=False,
+#         )
+#         return user
 
 
 
