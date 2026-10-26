@@ -1,4 +1,3 @@
-
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { ThemeProvider } from "./components/common/ThemeContext";
 import AuthLayout from "./components/auth/AuthLayout";
@@ -7,6 +6,7 @@ import Signup from "./components/forms/Signup";
 import Navbar from "./components/Navbar/Navbar";
 import VerifyEmail from "./components/auth/VerifyEmail";
 import Home from "./pages/Home";
+import Footer from "./pages/Footer";
 
 export default function App() {
   return (
@@ -16,7 +16,15 @@ export default function App() {
 
         <Routes>
           {/* Public home page */}
-          <Route path="/" element={<Home />} />
+          <Route
+            path="/"
+            element={
+              <>
+                <Home />
+                <Footer />
+              </>
+            }
+          />
 
           {/* Authentication pages */}
           <Route element={<AuthLayout />}>
