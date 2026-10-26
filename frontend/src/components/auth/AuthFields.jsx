@@ -2,11 +2,13 @@ import { useId, useState } from "react";
 
 function fieldClasses(hasError) {
   return [
-    "h-12 w-full rounded-xl border bg-[#0B1425] px-4 text-[15px] text-white",
-    "placeholder:text-slate-500 outline-hidden transition-[border-color,box-shadow] duration-200",
+    "h-12 w-full rounded-[20px] border-2 px-5 text-[15px]",
+    "bg-white text-[#102B4E] placeholder:text-[#8095B5]",
+    "dark:bg-[#0B1425] dark:text-white dark:placeholder:text-slate-400",
+    "outline-none transition duration-200",
     hasError
-      ? "border-red-400/70 focus:border-red-400 focus:ring-4 focus:ring-red-400/15"
-      : "border-[#00CFFF]/15 hover:border-[#00CFFF]/35 focus:border-[#00CFFF] focus:ring-4 focus:ring-[#00CFFF]/15",
+      ? "border-red-400 focus:ring-4 focus:ring-red-400/15"
+      : "border-[#102B4E] hover:border-cyan-500 focus:border-cyan-500 focus:ring-4 focus:ring-cyan-500/10 dark:border-slate-700 dark:hover:border-cyan-400 dark:focus:border-cyan-400",
   ].join(" ");
 }
 
@@ -20,18 +22,30 @@ function FieldShell({ id, label, error, hint, labelAside, children }) {
   return (
     <div>
       <div className="mb-2 flex items-center justify-between gap-3">
-        <label htmlFor={id} className="text-sm font-medium text-slate-200">
+        <label
+          htmlFor={id}
+          className="text-sm font-medium text-[#102B4E] dark:text-slate-100"
+        >
           {label}
         </label>
         {labelAside}
       </div>
+
       {children}
+
       {error ? (
-        <p id={`${id}-error`} role="alert" className="mt-2 text-xs text-red-300">
+        <p
+          id={`${id}-error`}
+          role="alert"
+          className="mt-2 text-xs text-red-600 dark:text-red-300"
+        >
           {error}
         </p>
       ) : hint ? (
-        <p id={`${id}-hint`} className="mt-2 text-xs text-slate-400">
+        <p
+          id={`${id}-hint`}
+          className="mt-2 text-xs text-slate-600 dark:text-slate-300"
+        >
           {hint}
         </p>
       ) : null}
@@ -42,16 +56,28 @@ function FieldShell({ id, label, error, hint, labelAside, children }) {
 export function FormHeader({ title, subtitle }) {
   return (
     <header className="mb-8">
-      <h1 className="text-[1.75rem] font-semibold tracking-tight text-white sm:text-3xl">{title}</h1>
-      <p className="mt-2 text-[15px] leading-relaxed text-slate-400">{subtitle}</p>
+      <h1 className="text-3xl font-semibold tracking-tight text-[#102B4E] sm:text-[2.5rem] dark:text-white">
+        {title}
+      </h1>
+
+      <p className="mt-2 text-[15px] leading-relaxed text-[#42638F] dark:text-slate-300">
+        {subtitle}
+      </p>
     </header>
   );
 }
 
 export function TextField({ label, error, hint, labelAside, ...inputProps }) {
   const id = useId();
+
   return (
-    <FieldShell id={id} label={label} error={error} hint={hint} labelAside={labelAside}>
+    <FieldShell
+      id={id}
+      label={label}
+      error={error}
+      hint={hint}
+      labelAside={labelAside}
+    >
       <input
         {...inputProps}
         id={id}
@@ -92,12 +118,24 @@ function EyeIcon({ off }) {
   );
 }
 
-export function PasswordField({ label, error, hint, labelAside, ...inputProps }) {
+export function PasswordField({
+  label,
+  error,
+  hint,
+  labelAside,
+  ...inputProps
+}) {
   const id = useId();
   const [visible, setVisible] = useState(false);
 
   return (
-    <FieldShell id={id} label={label} error={error} hint={hint} labelAside={labelAside}>
+    <FieldShell
+      id={id}
+      label={label}
+      error={error}
+      hint={hint}
+      labelAside={labelAside}
+    >
       <div className="relative">
         <input
           {...inputProps}
@@ -107,12 +145,13 @@ export function PasswordField({ label, error, hint, labelAside, ...inputProps })
           aria-describedby={describedBy(id, error, hint)}
           className={`${fieldClasses(Boolean(error))} pr-12`}
         />
+
         <button
           type="button"
           onClick={() => setVisible((value) => !value)}
           aria-label={visible ? "Hide password" : "Show password"}
           aria-pressed={visible}
-          className="absolute top-1/2 right-1.5 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-lg text-slate-400 transition-colors hover:text-[#00CFFF] focus-visible:ring-2 focus-visible:ring-[#00CFFF]/50 focus-visible:outline-hidden"
+          className="absolute right-2 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-lg text-slate-500 hover:text-cyan-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500 dark:text-slate-300"
         >
           <EyeIcon off={visible} />
         </button>
@@ -126,7 +165,7 @@ export function SubmitButton({ loading, children }) {
     <button
       type="submit"
       disabled={loading}
-      className="h-12 w-full rounded-xl bg-linear-to-r from-[#00CFFF] to-[#38A8FF] text-[15px] font-semibold text-[#04101F] shadow-[0_10px_30px_-12px_rgba(0,207,255,0.7)] transition duration-200 hover:brightness-110 focus-visible:ring-4 focus-visible:ring-[#00CFFF]/30 focus-visible:outline-hidden active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-60"
+      className="h-12 w-full rounded-[20px] bg-gradient-to-r from-[#00CFFF] to-[#38A8FF] text-[15px] font-semibold text-[#062342] shadow-[0_8px_24px_-12px_rgba(0,207,255,0.65)] transition duration-200 hover:brightness-105 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-cyan-500/30 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-60"
     >
       {loading ? "Please wait…" : children}
     </button>
@@ -134,15 +173,16 @@ export function SubmitButton({ loading, children }) {
 }
 
 const NOTICE_TONES = {
-  info: "border-[#00CFFF]/25 bg-[#00CFFF]/10 text-cyan-100",
-  error: "border-red-400/30 bg-red-400/10 text-red-200",
+  info: "border-cyan-500/30 bg-cyan-50 text-cyan-900 dark:bg-cyan-500/10 dark:text-cyan-100",
+  error:
+    "border-red-400/30 bg-red-50 text-red-700 dark:bg-red-400/10 dark:text-red-200",
 };
 
 export function FormNotice({ tone = "info", children }) {
   return (
     <div
       role="status"
-      className={`rounded-xl border px-4 py-3 text-sm leading-relaxed ${NOTICE_TONES[tone]}`}
+      className={`rounded-xl border px-4 py-3 text-sm leading-relaxed ${NOTICE_TONES[tone] || NOTICE_TONES.info}`}
     >
       {children}
     </div>

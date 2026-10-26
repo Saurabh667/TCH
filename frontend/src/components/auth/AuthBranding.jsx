@@ -47,13 +47,14 @@ const FEATURES = [
   },
 ];
 
-const gridMask = "radial-gradient(ellipse 80% 70% at 50% 40%, #000 30%, transparent 100%)";
+const gridMask =
+  "radial-gradient(ellipse 80% 70% at 50% 40%, #000 30%, transparent 100%)";
 
 const gridStyle = {
   backgroundImage:
-    "radial-gradient(circle at 0 0, rgba(0,207,255,0.22) 1.5px, transparent 2px)," +
-    "linear-gradient(rgba(0,207,255,0.05) 1px, transparent 1px)," +
-    "linear-gradient(90deg, rgba(0,207,255,0.05) 1px, transparent 1px)",
+    "radial-gradient(circle at 0 0, rgba(0,207,255,0.18) 1.5px, transparent 2px)," +
+    "linear-gradient(rgba(0,100,160,0.06) 1px, transparent 1px)," +
+    "linear-gradient(90deg, rgba(0,100,160,0.06) 1px, transparent 1px)",
   backgroundSize: "44px 44px",
   maskImage: gridMask,
   WebkitMaskImage: gridMask,
@@ -64,7 +65,7 @@ function Logo({ className }) {
     <img
       src={logo}
       alt="The Coders Hub logo"
-      className={`${className} rounded-xl border border-[#00CFFF]/25 bg-[#080D19] object-contain`}
+      className={`${className} rounded-xl border border-cyan-200 bg-[#0B2342] object-contain`}
     />
   );
 }
@@ -88,69 +89,84 @@ function FeatureIcon({ children }) {
 
 export default function AuthBranding() {
   return (
-    <div className="relative h-full overflow-hidden border-b border-[#00CFFF]/10 bg-[linear-gradient(160deg,#0B1425_0%,#080D19_100%)] lg:border-b-0">
-      {/* Background layers */}
-      <div aria-hidden="true" className="pointer-events-none absolute inset-0" style={gridStyle} />
+    <div className="relative h-full overflow-hidden border-b border-[#B9CDE8] bg-[#EAF4FC] transition-colors duration-300 lg:border-b-0 lg:border-r lg:border-[#B9CDE8] dark:border-cyan-900/30 dark:bg-[linear-gradient(160deg,#0B1425_0%,#080D19_100%)]">
+      {/* TCH grid background */}
       <div
         aria-hidden="true"
-        className="tch-glow pointer-events-none absolute -top-24 -left-24 h-80 w-80 rounded-full bg-[#00CFFF]/20 blur-3xl"
-      />
-      <div
-        aria-hidden="true"
-        className="tch-glow pointer-events-none absolute -right-24 -bottom-24 h-80 w-80 rounded-full bg-[#38A8FF]/15 blur-3xl"
-        style={{ animationDelay: "-4s" }}
+        className="pointer-events-none absolute inset-0 dark:opacity-100"
+        style={gridStyle}
       />
 
-      {/* Compact branding (tablet / mobile) */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -left-24 -top-24 h-80 w-80 rounded-full bg-cyan-300/20 blur-3xl dark:bg-[#00CFFF]/15"
+      />
+
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -bottom-24 -right-24 h-80 w-80 rounded-full bg-sky-300/25 blur-3xl dark:bg-[#38A8FF]/15"
+      />
+
+      {/* Compact branding on mobile and tablet */}
       <div className="relative z-10 flex items-center gap-3 px-5 py-5 sm:px-10 lg:hidden">
         <Logo className="h-11 w-11 shrink-0" />
+
         <div>
-          <p className="text-base leading-tight font-semibold text-white">The Coders Hub</p>
-          <p className="mt-1 text-[10px] font-medium tracking-[0.28em] text-[#00CFFF]">
+          <p className="text-base font-semibold leading-tight text-[#102B4E] dark:text-white">
+            The Coders Hub
+          </p>
+          <p className="mt-1 text-[10px] font-semibold tracking-[0.28em] text-cyan-700 dark:text-[#00CFFF]">
             BUILD · CONNECT · INNOVATE
           </p>
         </div>
       </div>
 
-      {/* Full branding (desktop) */}
+      {/* Desktop branding and features */}
       <div className="no-scrollbar relative z-10 hidden h-full overflow-y-auto lg:block">
-        <div className="mx-auto flex min-h-full w-full max-w-[36rem] flex-col justify-between gap-8 px-[clamp(1.5rem,3.5vw,3rem)] py-[clamp(1.75rem,6vh,3.5rem)]">
+        <div className="mx-auto flex min-h-full w-full max-w-[42rem] flex-col justify-between gap-8 px-[clamp(1.5rem,3.5vw,3rem)] py-[clamp(1.75rem,6vh,3.5rem)]">
           <header className="flex items-center gap-3.5">
             <Logo className="h-12 w-12 shrink-0" />
+
             <div>
-              <p className="text-base leading-tight font-semibold text-white">The Coders Hub</p>
-              <p className="mt-1.5 text-[10px] font-medium tracking-[0.28em] text-[#00CFFF]">
+              <p className="text-base font-semibold leading-tight text-[#102B4E] dark:text-white">
+                The Coders Hub
+              </p>
+              <p className="mt-1.5 text-[10px] font-semibold tracking-[0.28em] text-cyan-700 dark:text-[#00CFFF]">
                 BUILD · CONNECT · INNOVATE
               </p>
             </div>
           </header>
 
           <div>
-            <h1 className="text-[length:clamp(1.875rem,4.8vh,2.875rem)] leading-[1.15] font-semibold tracking-tight text-white">
+            <h1 className="text-[length:clamp(1.875rem,4.8vh,2.875rem)] font-semibold leading-[1.15] tracking-tight text-[#102B4E] dark:text-white">
               Think beyond.
               <br />
-              <span className="bg-linear-to-r from-[#00CFFF] to-[#38A8FF] bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-[#009ACB] to-[#2588E8] bg-clip-text text-transparent dark:from-[#00CFFF] dark:to-[#38A8FF]">
                 Build what&apos;s next.
               </span>
             </h1>
 
-            <p className="mt-[clamp(1rem,2.8vh,1.75rem)] max-w-[30rem] text-[length:clamp(0.8125rem,1.75vh,0.9375rem)] leading-[1.75] text-slate-400">
-              Discover opportunities, connect with fellow developers, explore technology events, and
-              turn your ideas into real projects. Your next big idea starts with the right community.
+            <p className="mt-[clamp(1rem,2.8vh,1.75rem)] max-w-[34rem] text-[length:clamp(0.8125rem,1.75vh,0.9375rem)] leading-[1.75] text-[#42638F] dark:text-slate-400">
+              Discover opportunities, connect with fellow developers, explore
+              technology events, and turn your ideas into real projects. Your
+              next big idea starts with the right community.
             </p>
 
             <ul className="mt-[clamp(1.75rem,5vh,3rem)] grid grid-cols-2 gap-4">
               {FEATURES.map((feature) => (
                 <li
                   key={feature.title}
-                  className="flex items-center gap-3.5 rounded-2xl border border-[#00CFFF]/15 bg-[#0B1425]/70 px-4 py-[clamp(0.875rem,2.2vh,1.25rem)] transition duration-300 hover:border-[#00CFFF]/40"
+                  className="flex items-center gap-3.5 rounded-2xl border border-[#B9CDE8] bg-white px-4 py-[clamp(0.875rem,2.2vh,1.25rem)] transition duration-300 hover:border-cyan-400 hover:shadow-md hover:shadow-cyan-900/5 dark:border-cyan-900/50 dark:bg-[#0B1425]/80 dark:hover:border-cyan-500/50"
                 >
-                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#00CFFF]/10 text-[#00CFFF]">
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#0B2342] text-[#00CFFF]">
                     <FeatureIcon>{feature.icon}</FeatureIcon>
                   </span>
+
                   <span className="min-w-0">
-                    <span className="block text-sm font-semibold text-white">{feature.title}</span>
-                    <span className="mt-1 block text-xs leading-snug text-slate-400">
+                    <span className="block text-sm font-semibold text-[#102B4E] dark:text-white">
+                      {feature.title}
+                    </span>
+                    <span className="mt-1 block text-xs leading-snug text-[#526D91] dark:text-slate-400">
                       {feature.text}
                     </span>
                   </span>
@@ -159,7 +175,7 @@ export default function AuthBranding() {
             </ul>
           </div>
 
-          <footer className="text-xs text-slate-500">
+          <footer className="text-xs text-[#607B9E] dark:text-slate-500">
             A community for curious minds and bold ideas.
           </footer>
         </div>

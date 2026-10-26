@@ -1,3 +1,4 @@
+
 import { useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import {
@@ -15,26 +16,35 @@ function validate(values) {
   const errors = {};
   const email = values.email.trim();
 
-  if (values.fullName.trim().length < 2) errors.fullName = "Enter your full name.";
+  if (values.fullName.trim().length < 2) {
+    errors.fullName = "Enter your full name.";
+  }
 
-  if (!email) errors.email = "Enter your email address.";
-  else if (!EMAIL_PATTERN.test(email)) errors.email = "Enter a valid email address.";
+  if (!email) {
+    errors.email = "Enter your email address.";
+  } else if (!EMAIL_PATTERN.test(email)) {
+    errors.email = "Enter a valid email address.";
+  }
 
-  if (!values.password) errors.password = "Create a password.";
-  else if (values.password.length < MIN_PASSWORD_LENGTH)
+  if (!values.password) {
+    errors.password = "Create a password.";
+  } else if (values.password.length < MIN_PASSWORD_LENGTH) {
     errors.password = `Use at least ${MIN_PASSWORD_LENGTH} characters.`;
+  }
 
-  if (!values.confirmPassword) errors.confirmPassword = "Confirm your password.";
-  else if (values.confirmPassword !== values.password)
+  if (!values.confirmPassword) {
+    errors.confirmPassword = "Confirm your password.";
+  } else if (values.confirmPassword !== values.password) {
     errors.confirmPassword = "Passwords do not match.";
+  }
 
   return errors;
 }
 
-// TODO(backend): replace with a real request, e.g. POST /api/auth/register.
-// Never store the password in localStorage/sessionStorage.
+// Connect this function to your backend when the API is ready.
 async function registerUser(details) {
   void details;
+
   return {
     ok: false,
     message:
@@ -43,16 +53,18 @@ async function registerUser(details) {
 }
 
 const linkClasses =
-  "rounded font-medium text-[#38A8FF] underline-offset-4 transition-colors hover:text-[#00CFFF] hover:underline focus-visible:ring-2 focus-visible:ring-[#00CFFF]/50 focus-visible:outline-hidden";
+  "rounded font-semibold text-cyan-700 underline-offset-4 transition-colors hover:text-sky-800 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-600/50 dark:text-cyan-400 dark:hover:text-cyan-300 dark:focus-visible:ring-cyan-400/50";
 
 export default function Signup() {
   const formRef = useRef(null);
+
   const [values, setValues] = useState({
     fullName: "",
     email: "",
     password: "",
     confirmPassword: "",
   });
+
   const [errors, setErrors] = useState({});
   const [notice, setNotice] = useState(null);
   const [submitting, setSubmitting] = useState(false);
@@ -60,59 +72,79 @@ export default function Signup() {
   const handleChange = (event) => {
     const { name, value } = event.target;
     const next = { ...values, [name]: value };
+
     setValues(next);
+
     setErrors((prev) => {
       const fresh = validate(next);
       const updated = { ...prev };
+
       Object.keys(prev).forEach((key) => {
         if (prev[key]) updated[key] = fresh[key];
       });
+
       return updated;
     });
   };
 
   const handleBlur = (event) => {
     const { name } = event.target;
-    setErrors((prev) => ({ ...prev, [name]: validate(values)[name] }));
+
+    setErrors((prev) => ({
+      ...prev,
+      [name]: validate(values)[name],
+    }));
   };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     setNotice(null);
+
     const nextErrors = validate(values);
     setErrors(nextErrors);
 
     if (Object.keys(nextErrors).length > 0) {
       requestAnimationFrame(() =>
-        formRef.current?.querySelector('[aria-invalid="true"]')?.focus()
+        formRef.current
+          ?.querySelector('[aria-invalid="true"]')
+          ?.focus()
       );
       return;
     }
 
     setSubmitting(true);
+
     try {
       const result = await registerUser({
         fullName: values.fullName.trim(),
         email: values.email.trim(),
         password: values.password,
       });
+
       if (!result.ok) {
-        setNotice({ tone: "info", text: result.message });
+        setNotice({
+          tone: "info",
+          text: result.message,
+        });
       }
-      // TODO(backend): on success, navigate("/login") or sign the user in.
     } finally {
       setSubmitting(false);
     }
   };
 
   return (
-    <div>
+    <div className="w-full text-[#102B4E] transition-colors duration-300 dark:text-slate-100">
       <FormHeader
         title="Create your account"
         subtitle="Join The Coders Hub and start building with your campus community."
       />
 
-      <form ref={formRef} onSubmit={handleSubmit} noValidate className="space-y-4">
+      <form
+        ref={formRef}
+        onSubmit={handleSubmit}
+        noValidate
+        className="space-y-5"
+      >
         <TextField
           label="Full name"
           name="fullName"
@@ -160,12 +192,18 @@ export default function Signup() {
           error={errors.confirmPassword}
         />
 
-        {notice && <FormNotice tone={notice.tone}>{notice.text}</FormNotice>}
+        {notice && (
+          <FormNotice tone={notice.tone}>
+            {notice.text}
+          </FormNotice>
+        )}
 
-        <SubmitButton loading={submitting}>Create account</SubmitButton>
+        <SubmitButton loading={submitting}>
+          Create account
+        </SubmitButton>
       </form>
 
-      <p className="mt-6 text-center text-sm text-slate-400">
+      <p className="mt-7 text-center text-sm text-slate-600 dark:text-slate-300">
         Already have an account?{" "}
         <Link to="/login" className={linkClasses}>
           Sign in
