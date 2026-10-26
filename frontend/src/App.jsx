@@ -1,35 +1,12 @@
 
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
-
+import { ThemeProvider } from "./components/common/ThemeContext";
 import AuthLayout from "./components/auth/AuthLayout";
 import Login from "./components/forms/Login";
 import Signup from "./components/forms/Signup";
 import Navbar from "./components/Navbar/Navbar";
-import VerifyEmail from "./components/auth/VerifyEmail.jsx";
-import Home from "./pages/Home.jsx";
-import AuthVerification from "./components/auth/AuthVerification.jsx";
-
-function HomePage() {
-  return (
-    <>
-      <BrowserRouter>
-        <Navbar />
-        <Routes>
-          <Route element={<AuthLayout />}>
-            <Route path="/login" element={<Login />} />
-            <Route path="/signup" element={<Signup />} />
-            <Route path="/verify-email" element={<VerifyEmail />} />
-          </Route>
-          <Route element={<AuthVerification />}>
-            <Route path="/" element={<Home />} />
-          </Route>
-
-          <Route path="" element={<Navigate to="/login" replace />} />
-        </Routes>
-      </BrowserRouter>
-    </>
-  );
-}
+import VerifyEmail from "./components/auth/VerifyEmail";
+import Home from "./pages/Home";
 
 export default function App() {
   return (
@@ -38,13 +15,17 @@ export default function App() {
         <Navbar />
 
         <Routes>
-          <Route path="/" element={<HomePage />} />
+          {/* Public home page */}
+          <Route path="/" element={<Home />} />
 
+          {/* Authentication pages */}
           <Route element={<AuthLayout />}>
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
+            <Route path="/verify-email" element={<VerifyEmail />} />
           </Route>
 
+          {/* Unknown routes */}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </BrowserRouter>
