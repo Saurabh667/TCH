@@ -1,4 +1,6 @@
+
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+
 import AuthLayout from "./components/auth/AuthLayout";
 import Login from "./components/forms/Login";
 import Signup from "./components/forms/Signup";
@@ -7,8 +9,7 @@ import VerifyEmail from "./components/auth/VerifyEmail.jsx";
 import Home from "./pages/Home.jsx";
 import AuthVerification from "./components/auth/AuthVerification.jsx";
 
-
-export default function App() {
+function HomePage() {
   return (
     <>
       <BrowserRouter>
@@ -27,5 +28,26 @@ export default function App() {
         </Routes>
       </BrowserRouter>
     </>
+  );
+}
+
+export default function App() {
+  return (
+    <ThemeProvider>
+      <BrowserRouter>
+        <Navbar />
+
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+
+          <Route element={<AuthLayout />}>
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<Signup />} />
+          </Route>
+
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </BrowserRouter>
+    </ThemeProvider>
   );
 }
