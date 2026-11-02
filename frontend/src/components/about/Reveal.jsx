@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 
 export default function Reveal({
-  children,
+
   className = "",
   delay = 0,
 }) {

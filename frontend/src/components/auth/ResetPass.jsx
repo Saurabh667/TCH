@@ -1,125 +1,159 @@
+
 import { useState } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { resetPassword } from "../../services/auth";
 
-const ResetPass = () => {
-const { uid, token } = useParams();
-const navigate = useNavigate();
+export default function ResetPass() {
+  const { uid, token } = useParams();
+  const navigate = useNavigate();
 
-const [password, setPassword] = useState("");
-const [confirmPassword, setConfirmPassword] = useState("");
-const [loading, setLoading] = useState(false);
-const [message, setMessage] = useState("");
-const [error, setError] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState("");
+  const [error, setError] = useState("");
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-const handleSubmit = async (e) => {
-e.preventDefault();
+    setMessage("");
+    setError("");
 
-setMessage("");
-setError("");
+    if (password !== confirmPassword) {
+      setError("Passwords do not match.");
+      return;
+    }
 
+    if (password.length < 8) {
+      setError("Password must contain at least 8 characters.");
+      return;
+    }
 
-if (password !== confirmPassword) {
-    setError("Passwords do not match.");
-    return;
-}
+    setLoading(true);
 
-if (password.length < 8) {
-    setError("Password must contain at least 8 characters.");
-    return;
-}
+    try {
+      const response = await resetPassword(uid, token, password);
 
-setLoading(true);
+      setMessage(response.message);
+      setPassword("");
+      setConfirmPassword("");
 
-try {
-
-    const response = await resetPassword(uid, token, password);
-
-
-    setMessage(response.message);
-    setPassword("");
-    setConfirmPassword("");
-
-    setTimeout(() => {
+      setTimeout(() => {
         navigate("/login");
-    }, 2000);
+      }, 2000);
+    } catch (err) {
+      const backendMessage = err.response?.data?.message;
 
-} catch (err) {
-
-    const backendMessage = err.response?.data?.message;
-
-    setError(
+      setError(
         Array.isArray(backendMessage)
-            ? backendMessage.join(" ")
-            : backendMessage || "Unable to reset password."
-    );
+          ? backendMessage.join(" ")
+          : backendMessage || "Unable to reset password."
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
 
-} finally {
-    setLoading(false);
-}
+  const inputClass =
+    "w-full rounded-xl border border-[#D8E4F0] bg-[#F7FAFD] px-4 py-3.5 text-sm text-[#102B4E] outline-none transition placeholder:text-slate-400 focus:border-cyan-500 focus:ring-4 focus:ring-cyan-500/10 dark:border-white/10 dark:bg-[#0B1727] dark:text-white";
 
-};
+  return (
+    <div className="mx-auto w-full max-w-[480px] rounded-3xl border border-[#D8E4F0] bg-white p-7 shadow-sm sm:p-9 dark:border-white/10 dark:bg-[#101e30]">
 
+      {/* Icon */}
+      <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-cyan-50 text-cyan-600 dark:bg-cyan-400/10 dark:text-cyan-400">
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.8"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className="h-7 w-7"
+        >
+          <rect x="3" y="11" width="18" height="10" rx="2" />
+          <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+          <path d="M12 15v2" />
+        </svg>
+      </div>
 
-return (
-    <div className="reset-password-page">
+      <h2 className="text-2xl font-bold tracking-tight text-[#102B4E] dark:text-white">
+        Reset Password
+      </h2>
 
-        <div className="reset-password-card">
+      <p className="mt-3 text-sm leading-7 text-[#607B9E] dark:text-slate-400">
+        Create a new password for your TCH account. Make sure it's strong and secure.
+      </p>
 
-            <h2>Reset Password</h2>
+      <form onSubmit={handleSubmit} className="mt-7 space-y-5">
+        <div>
+          <label className="mb-2 block text-sm font-semibold text-[#304966] dark:text-slate-200">
+            New Password
+          </label>
 
-            <p>
-                Create a new password for your TCH account.
-            </p>
-
-            <form onSubmit={handleSubmit}>
-
-                <label>New Password</label>
-
-                <input
-                    type="password"
-                    placeholder="Enter new password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                />
-
-                <label>Confirm Password</label>
-
-                <input
-                    type="password"
-                    placeholder="Confirm new password"
-                    value={confirmPassword}
-                    onChange={(e) =>
-                        setConfirmPassword(e.target.value)
-                    }
-                    required
-                />
-
-                <button type="submit" disabled={loading}>
-                    {loading ? "Resetting..." : "Reset Password"}
-                </button>
-
-            </form>
-
-            {message && (
-                <p className="success-message">{message}</p>
-            )}
-
-            {error && (
-                <p className="error-message">{error}</p>
-            )}
-
-            <Link to="/login">
-                Back to Login
-            </Link>
-
+          <input
+            type="password"
+            placeholder="Enter new password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            minLength={8}
+            className={inputClass}
+          />
         </div>
 
+        <div>
+          <label className="mb-2 block text-sm font-semibold text-[#304966] dark:text-slate-200">
+            Confirm Password
+          </label>
+
+          <input
+            type="password"
+            placeholder="Confirm new password"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            required
+            minLength={8}
+            className={inputClass}
+          />
+        </div>
+
+        <p className="text-xs text-[#8094AC] dark:text-slate-500">
+          Password must contain at least 8 characters.
+        </p>
+
+        <button
+          type="submit"
+          disabled={loading}
+          className="w-full rounded-xl bg-gradient-to-r from-[#00BFEA] to-[#2588E8] px-5 py-3.5 text-sm font-bold text-white shadow-md shadow-cyan-500/20 transition duration-300 hover:-translate-y-0.5 hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-60"
+        >
+          {loading ? "Resetting..." : "Reset Password →"}
+        </button>
+      </form>
+
+      {message && (
+        <div className="mt-5 rounded-xl border border-emerald-200 bg-emerald-50 p-3 text-sm text-emerald-700 dark:border-emerald-500/20 dark:bg-emerald-500/10 dark:text-emerald-400">
+          {message}
+          <p className="mt-1 text-xs">
+            Redirecting you to login...
+          </p>
+        </div>
+      )}
+
+      {error && (
+        <div className="mt-5 rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-600 dark:border-red-500/20 dark:bg-red-500/10 dark:text-red-400">
+          {error}
+        </div>
+      )}
+
+      <div className="my-6 border-t border-[#E1EAF3] dark:border-white/10" />
+
+      <Link
+        to="/login"
+        className="block text-center text-sm font-semibold text-[#0085AD] transition hover:text-blue-600 dark:text-cyan-400"
+      >
+        ← Back to Login
+      </Link>
     </div>
-);
-
-};
-
-export default ResetPass;
+  );
+}
