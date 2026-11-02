@@ -10,6 +10,8 @@ import Footer from "./pages/Footer";
 import About from "./pages/About";
 import AuthVerification from "./components/auth/AuthVerification";
 import Profile from "./pages/Profile";
+import ForgotPass from "./components/auth/ForgotPass";
+import ResetPass from "./components/auth/ResetPass";
 
 export default function App() {
   return (
@@ -26,6 +28,8 @@ export default function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/verify-email" element={<VerifyEmail />} />
+            <Route path="/forgot-password" element={<ForgotPass />} />
+            <Route path="/reset-password/:uid/:token" element={<ResetPass />}/>
           </Route>
 
           {/* Protected Routes */}

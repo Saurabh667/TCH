@@ -1,18 +1,3 @@
-# from django.contrib.auth import get_user_model
-# from rest_framework import generics, status
-# from rest_framework.permissions import AllowAny,IsAuthenticated,IsAdminUser
-# from rest_framework.response import Response
-# from rest_framework.views import APIView
-# from rest_framework_simplejwt.views import TokenObtainPairView,TokenRefreshView
-
-# from .serializers import RegisterSerializer,EmailTokenObtainPairSerializer,UserProfileSerializer,CoreTeamMemberSerializer,MemberApplication,MemberApplicationSerializer
-# from .utils import send_verification_email
-# from .tokens import email_verification_token
-
-# from .models import CoreTeam,MemberApplication
-
-# User = get_user_model()
-
 
 from django.contrib.auth import get_user_model
 from django.db import transaction
@@ -40,8 +25,118 @@ from .utils import send_verification_email
 from .tokens import email_verification_token
 from .models import CoreTeam, MemberApplication, PendingRegistration
 
+from django.contrib.auth.tokens import default_token_generator
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.encoding import force_bytes, force_str
+from django.core.mail import send_mail
+from django.conf import settings
+from django.contrib.auth import get_user_model
+from rest_framework.decorators import api_view, permission_classes
+
+
 User = get_user_model()
 
+
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def forgot_password(request):
+
+    email = request.data.get('email')
+
+    if not email:
+        return Response(
+            {"message": "Email is required"},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    user = User.objects.filter(email=email).first()
+
+    if user:
+        uid = urlsafe_base64_encode(force_bytes(user.pk))
+
+        token = default_token_generator.make_token(user)
+
+        reset_link = (
+            f"{settings.FRONTEND_URL}/reset-password/{uid}/{token}/"
+        )
+        print(reset_link)
+
+        send_mail(
+            subject="TCH - Reset Your Password",
+            message=f"""
+Hello {user.username},
+
+We received a request to reset your TCH account password.
+
+Click the link below to reset your password:
+
+{reset_link}
+
+If you did not request this, please ignore this email.
+""",
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            recipient_list=[email],
+            fail_silently=False,
+        )
+
+    return Response({
+        "message": "If an account exists with this email, a password reset link has been sent."
+    })
+
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def reset_password(request):
+
+    uid = request.data.get('uid')
+    token = request.data.get('token')
+    password = request.data.get('password')
+
+    if not all([uid, token, password]):
+        return Response(
+            {"message": "All fields are required"},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+    try:
+        decoded_uid = force_str(urlsafe_base64_decode(uid))
+        print("Decoded UID:", decoded_uid)
+
+        user = User.objects.get(pk=decoded_uid)
+
+
+        is_valid = default_token_generator.check_token(user, token)
+
+        print("Token Valid:", is_valid)
+
+    except Exception as e:
+        print("DEBUG ERROR:", str(e))
+
+
+
+    if not default_token_generator.check_token(user, token):
+        return Response(
+            {"message": "Reset link is invalid or expired"},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    from django.contrib.auth.password_validation import validate_password
+    from django.core.exceptions import ValidationError
+
+    try:
+        validate_password(password, user=user)
+    except ValidationError as e:
+        return Response(
+            {"message": e.messages},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    user.set_password(password)
+    user.save()
+
+    return Response({
+        "message": "Password reset successfully"
+    })
 
 # class RegisterView(generics.CreateAPIView):
 #     serializer_class = RegisterSerializer
