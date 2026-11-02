@@ -138,39 +138,6 @@ def reset_password(request):
         "message": "Password reset successfully"
     })
 
-# class RegisterView(generics.CreateAPIView):
-#     serializer_class = RegisterSerializer
-#     permission_classes = [AllowAny]
-
-#     def create(self, request, *args, **kwargs):
-#         serializer = self.get_serializer(data=request.data)
-#         serializer.is_valid(raise_exception=True)
-#         user = serializer.save()
-
-#         try:
-#             send_verification_email(user)
-#         except Exception:
-#             user.delete()
-#             return Response(
-#                 {"detail": "Registration failed because the verification email could not be sent. Please try again."},
-#                 status=status.HTTP_503_SERVICE_UNAVAILABLE,
-#             )
-
-#         return Response(
-#             {
-#                 "message": "Registration successful. Check your email to verify your account.",
-#                 "user": {
-#                     "id": user.id,
-#                     "full_name": user.full_name,
-#                     "email": user.email,
-#                     "student_id": user.student_id,
-#                     "role": user.role,
-#                     "is_email_verified": user.is_email_verified,
-#                 },
-#             },
-#             status=status.HTTP_201_CREATED,
-#         )
-
 
 class RegisterView(generics.CreateAPIView):
     serializer_class = RegisterSerializer
