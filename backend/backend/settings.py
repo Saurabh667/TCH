@@ -166,3 +166,7 @@ DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 # Frontend URL for email verification links
 PASSWORD_RESET_TIMEOUT = 60*30
 FRONTEND_URL = "http://localhost:5173"
+
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
