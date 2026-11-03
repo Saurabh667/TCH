@@ -1,39 +1,76 @@
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { UserRound } from "lucide-react";
 import { FaInstagram, FaLinkedin } from "react-icons/fa";
-
 import SocialLink from "./SocialLink";
 
 const teamColors = {
   tech: "from-cyan-500 to-blue-600",
   "event-management": "from-blue-600 to-indigo-600",
-  "social-media": "from-pink-500 to-purple-600",
-  design: "from-violet-500 to-fuchsia-600",
-  "video-editing": "from-amber-500 to-orange-600",
+  "social-media": "from-cyan-500 to-blue-600",
+  design: "from-blue-500 to-cyan-600",
+  "video-editing": "from-cyan-600 to-blue-700",
 };
 
-export default function MemberCard({ member, index = 0, teams = [] }) {
-  const [imageError, setImageError] = useState(false);
+const teamPhotos = {
+  shikha: "/teamImg/Shikha.jpg",
+  adarsh: "/teamImg/Adarsh.jpg",
+  saurabh: "/teamImg/saurabh5.png",
+  devanshu: "/teamImg/Devanshu.jpg",
+  ayush: "/teamImg/Ayush.jpg",
+  disha: "/teamImg/Disha.jpg",
+  kalyani: "/teamImg/Kalyani.jpg",
+  kishan: "/teamImg/Kishan.jpg",
+  niraj: "/teamImg/Niraj.jpg",
+  sakshi: "/teamImg/Sakshi.jpg",
+};
 
-  const team = teams.find((item) => item.id === member.teamId);
+export default function MemberCard({
+  member,
+  index = 0,
+  teams = [],
+}) {
+  const fullName = member.fullName || "";
+  const firstName = fullName.trim().split(/\s+/)[0].toLowerCase();
+
+  const localImage = teamPhotos[firstName] || null;
+  const profileImage = member.profile?.photo || null;
+
+  const [imageFailed, setImageFailed] = useState(false);
+
+  useEffect(() => {
+    setImageFailed(false);
+  }, [member.id, profileImage]);
+
+  const imageSrc = imageFailed
+    ? profileImage !== localImage
+      ? localImage
+      : null
+    : profileImage || localImage;
+
+  const team = teams.find(
+    (item) => item.id === member.teamId
+  );
+
   const gradient =
     teamColors[member.teamId] || "from-cyan-500 to-blue-600";
 
   return (
     <article
-      className="group relative isolate h-[360px] w-full overflow-hidden rounded-2xl border border-slate-200 bg-slate-900 shadow-sm transition duration-300 hover:-translate-y-1 hover:border-emerald-400/70 hover:shadow-xl dark:border-white/10 dark:bg-[#101713]"
-      style={{ transitionDelay: `${(index % 4) * 50}ms` }}
+      className="group relative isolate h-[360px] w-full overflow-hidden rounded-2xl border border-slate-200 bg-slate-900 shadow-sm transition duration-300 hover:-translate-y-1 hover:border-cyan-400/70 hover:shadow-xl dark:border-white/10 dark:bg-[#101e30]"
+      style={{
+        transitionDelay: `${(index % 4) * 50}ms`,
+      }}
       tabIndex={0}
     >
-      {/* Member Photo */}
-      {member.profile?.photo && !imageError ? (
+      {/* Member Photo - Always Clear */}
+      {imageSrc ? (
         <img
-          src={member.profile.photo}
-          alt={member.fullName}
+          src={imageSrc}
+          alt={fullName}
           loading="lazy"
-          onError={() => setImageError(true)}
-          className="absolute inset-0 h-full w-full object-cover transition duration-500 group-hover:scale-105"
+          onError={() => setImageFailed(true)}
+          className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
         />
       ) : (
         <div
@@ -47,31 +84,60 @@ export default function MemberCard({ member, index = 0, teams = [] }) {
         </div>
       )}
 
-      {/* Photo Overlay */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/15 to-black/5" />
+      {/* Hover-only Gradient Overlay */}
+      <div
+        className="
+          absolute inset-0 z-10
+          bg-gradient-to-t
+         from-[#071426]/70
+via-[#071426]/70
+          to-transparent
+          opacity-0
+          transition-opacity duration-500
+          group-hover:opacity-100
+          group-focus-within:opacity-100
+        "
+      />
 
       {/* Default Details */}
-      <div className="absolute inset-x-0 bottom-0 p-5 text-white transition duration-300 group-hover:opacity-0 group-focus-within:opacity-0">
-        <h3 className="text-xl font-extrabold leading-tight">
-          {member.fullName}
+      <div
+        className="
+          absolute inset-x-0 bottom-0 z-20 p-5 text-white
+          transition-opacity duration-300
+          group-hover:opacity-0
+          group-focus-within:opacity-0
+        "
+      >
+        <h3 className="text-xl font-extrabold leading-tight drop-shadow-lg">
+          {fullName}
         </h3>
 
-        <p className="mt-2 text-xs font-bold uppercase tracking-[0.2em] text-emerald-400">
+        <p className="mt-2 text-xs font-bold uppercase tracking-[0.2em] text-cyan-400 drop-shadow-lg">
           {member.position}
         </p>
       </div>
 
-      {/* Hover Details */}
-      <div className="absolute inset-0 flex flex-col justify-end overflow-y-auto bg-[#07100c]/95 p-5 text-white opacity-0 transition duration-300 group-hover:opacity-100 group-focus-within:opacity-100">
-        <p className="text-xs font-bold uppercase tracking-[0.2em] text-emerald-400">
+      {/* Hover Details - Transparent Gradient Background */}
+      <div
+        className="
+          absolute inset-0 z-20
+          flex flex-col justify-end
+          overflow-y-auto p-5 text-white
+          opacity-0
+          transition-opacity duration-500
+          group-hover:opacity-100
+          group-focus-within:opacity-100
+        "
+      >
+        <p className="text-xs font-bold uppercase tracking-[0.2em] text-cyan-400">
           {team?.name || "TCH Member"}
         </p>
 
-        <h3 className="mt-2 text-xl font-extrabold">
-          {member.fullName}
+        <h3 className="mt-2 text-xl font-extrabold drop-shadow-md">
+          {fullName}
         </h3>
 
-        <p className="mt-1 text-sm font-semibold text-emerald-300">
+        <p className="mt-1 text-sm font-semibold text-cyan-300">
           {member.position}
         </p>
 
@@ -86,7 +152,7 @@ export default function MemberCard({ member, index = 0, teams = [] }) {
             {member.profile.skills.map((skill) => (
               <span
                 key={skill}
-                className="rounded-md border border-emerald-400/25 bg-emerald-400/10 px-2 py-1 text-xs text-emerald-100"
+                className="rounded-md border border-cyan-400/25 bg-cyan-400/10 px-2 py-1 text-xs text-cyan-100"
               >
                 {skill}
               </span>
@@ -98,21 +164,21 @@ export default function MemberCard({ member, index = 0, teams = [] }) {
         <div className="mt-4 flex items-center gap-2">
           <SocialLink
             href={member.socialLinks?.linkedin}
-            label={`${member.fullName} on LinkedIn`}
+            label={`${fullName} on LinkedIn`}
           >
             <FaLinkedin size={17} />
           </SocialLink>
 
           <SocialLink
             href={member.socialLinks?.github}
-            label={`${member.fullName} on GitHub`}
+            label={`${fullName} on GitHub`}
           >
             GH
           </SocialLink>
 
           <SocialLink
             href={member.socialLinks?.instagram}
-            label={`${member.fullName} on Instagram`}
+            label={`${fullName} on Instagram`}
           >
             <FaInstagram size={17} />
           </SocialLink>
