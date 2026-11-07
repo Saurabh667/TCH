@@ -249,15 +249,15 @@ const publicLinks = [
 ];
 
 const adminLinks = [
-{ name: "Admin Dashboard", path: "/admin/dashboard" },
-{ name: "Manage Members", path: "/admin/members" },
-{ name: "Manage Core Team", path: "/admin/core-team" },
+  { name: "Admin Dashboard", path: "/dashboard/events" },
+  { name: "Manage Members", path: "/admin/members" },
+  { name: "Manage Core Team", path: "/admin/core-team" },
 ];
 
 const teamLinks = [
-{ name: "Team Dashboard", path: "/team/dashboard" },
-{ name: "Manage Events", path: "/team/events" },
-{ name: "Manage Announcements", path: "/team/announcements" },
+  { name: "Team Dashboard", path: "/dashboard/events" },
+  { name: "Manage Events", path: "/dashboard/events/manage" },
+  { name: "Manage Announcements", path: "/team/announcements" },
 ];
 
 const memberLinks = [

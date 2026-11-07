@@ -1,40 +1,48 @@
+
 import { useEffect, useState } from "react";
 import { Navigate, Outlet, useLocation } from "react-router-dom";
-import api from "../../services/auth";
+import api from "../../services/api";
 
 export default function AuthVerification() {
   const location = useLocation();
-
   const [status, setStatus] = useState("checking");
 
   useEffect(() => {
     let cancelled = false;
 
-    const verifyAccessToken = async () => {
+    const verifySession = async () => {
       const accessToken =
         localStorage.getItem("access") ||
         sessionStorage.getItem("access");
 
-      if (!accessToken) {
+      const refreshToken =
+        localStorage.getItem("refresh") ||
+        sessionStorage.getItem("refresh");
+
+      if (!accessToken && !refreshToken) {
         if (!cancelled) setStatus("unauthenticated");
         return;
       }
 
       try {
-        // Django validates the token through an authenticated endpoint.
-        await api.get("/auth/me/", {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        });
+        await api.get("/auth/me/");
 
-        if (!cancelled) setStatus("authenticated");
-      } catch {
-        if (!cancelled) setStatus("unauthenticated");
+        if (!cancelled) {
+          setStatus("authenticated");
+        }
+      } catch (error) {
+        console.error(
+          "Session verification failed:",
+          error.response?.data || error.message
+        );
+
+        if (!cancelled) {
+          setStatus("unauthenticated");
+        }
       }
     };
 
-    verifyAccessToken();
+    verifySession();
 
     return () => {
       cancelled = true;
@@ -44,7 +52,9 @@ export default function AuthVerification() {
   if (status === "checking") {
     return (
       <div className="flex min-h-[50vh] items-center justify-center">
-        <p className="text-slate-600">Verifying your session...</p>
+        <p className="text-slate-600">
+          Verifying your session...
+        </p>
       </div>
     );
   }
